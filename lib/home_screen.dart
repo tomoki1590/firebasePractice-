@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     (route) => true);
               }
             },
-            child: const Text('ログイン')),
+            child: const Text('ログイ')),
       ),
     );
   }
