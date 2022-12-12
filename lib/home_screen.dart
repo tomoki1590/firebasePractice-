@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const ChatPage()),
-                    (route) => false);
+                    (route) => true);
               }
             },
             child: const Text('ログイン')),
