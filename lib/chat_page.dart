@@ -2,6 +2,7 @@ import 'package:chat_practice/post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import 'account_page.dart';
@@ -53,7 +54,60 @@ class _ChatPageState extends State<ChatPage> {
                         //上の処理でリスト全体が入ってくるので、一個一個のデータをとる処理をする
                         final post = posts[index].data();
 
-                        return PostWidget(post: post);
+                        return Slidable(
+                            startActionPane: ActionPane(
+                              // (2)
+                              extentRatio: 0.2,
+                              motion: const ScrollMotion(), // (5)
+                              children: [
+                                FirebaseAuth.instance.currentUser?.uid ==
+                                        post.posterId
+                                    ? Expanded(
+                                      child: Row(
+                                          children: [
+                                            SlidableAction(
+                                              onPressed: (_) {
+                                                post.reference.delete();
+                                              },
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: Colors.red,
+                                              icon: Icons.delete,
+                                              label: 'Dleate',
+                                            ),
+                                            SlidableAction(
+                                              onPressed: (_) {
+                                                showDialog(
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text('編集'),
+                                                        content: TextFormField(
+                                                          initialValue: post.text,
+                                                          autofocus: true,
+                                                          onFieldSubmitted:
+                                                              (newText) {
+                                                            post.reference
+                                                                .update({
+                                                              'text': newText
+                                                            });
+                                                          },
+                                                        ),
+                                                      );
+                                                    },
+                                                    context: context);
+                                              },
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: Colors.blue,
+                                              icon: Icons.edit,
+                                              label: 'Edit',
+                                            ),
+                                          ],
+                                        ),
+                                    )
+                                    : Container(),
+                              ],
+                            ),
+                            child: PostWidget(post: post));
                       },
                       itemCount: posts.length,
                     );
